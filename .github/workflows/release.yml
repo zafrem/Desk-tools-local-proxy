@@ -1,0 +1,38 @@
+name: Release binaries
+
+# Build cross-platform binaries and attach them to a GitHub Release.
+# Trigger by pushing a version tag, e.g.:  git tag v0.1.0 && git push --tags
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      # Bun cross-compiles all targets from a single Linux runner.
+      - name: Build binaries
+        run: bun run build:bun
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/ssh-proxy-macos-arm64
+            dist/ssh-proxy-macos-x64
+            dist/ssh-proxy-linux-x64
+            dist/ssh-proxy-windows-x64.exe
+          generate_release_notes: true
