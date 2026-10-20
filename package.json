@@ -1,7 +1,7 @@
 {
   "name": "desk-tools-local-proxy",
-  "version": "0.1.0",
-  "description": "Local WebSocket-to-SSH bridge for the Desk-tools web terminal. Runs entirely on your machine; nothing is sent to any third party.",
+  "version": "0.2.0",
+  "description": "Local WebSocket bridge between the Desk-tools web app and SSH, Telnet, MySQL, PostgreSQL, Hive and Trino. Runs entirely on your machine; nothing is sent to any third party.",
   "license": "MIT",
   "type": "commonjs",
   "bin": {
@@ -9,7 +9,9 @@
   },
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+    "src",
+    "PROTOCOL.md"
   ],
   "engines": {
     "node": ">=18"
@@ -17,13 +19,17 @@
   "scripts": {
     "start": "node index.js",
     "build:bun": "bun build ./index.js --compile --target=bun-darwin-arm64 --outfile dist/local-proxy-macos-arm64 && bun build ./index.js --compile --target=bun-darwin-x64 --outfile dist/local-proxy-macos-x64 && bun build ./index.js --compile --target=bun-linux-x64 --outfile dist/local-proxy-linux-x64 && bun build ./index.js --compile --target=bun-windows-x64 --outfile dist/local-proxy-windows-x64.exe",
-    "build:pkg": "pkg . --targets node18-macos-arm64,node18-macos-x64,node18-linux-x64,node18-win-x64 --out-path dist"
+    "build:pkg": "pkg . --targets node18-macos-arm64,node18-macos-x64,node18-linux-x64,node18-win-x64 --out-path dist",
+    "test": "node --test --test-force-exit \"test/*.test.js\""
   },
   "pkg": {
     "assets": [],
     "outputPath": "dist"
   },
   "dependencies": {
+    "hive-driver": "^1.0.1",
+    "mysql2": "^3.24.6",
+    "pg": "^8.23.1",
     "ssh2": "^1.16.0",
     "ws": "^8.18.0"
   },
