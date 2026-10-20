@@ -35,25 +35,12 @@ automatically. Use **Settings → Proxy → Test connection** to verify the link
 The proxy binds to `127.0.0.1` only and rejects WebSocket upgrades whose
 `Origin` is not the Desk-tools site (or `localhost:3000` for development).
 
-## Building standalone binaries (optional)
+## Standalone binaries (optional, not needed to run)
 
-**Option A — Bun (cross-compiles all platforms from one machine):**
-
-```bash
-bun install
-npm run build:bun     # outputs dist/local-proxy-{macos,linux,windows}-*
-```
-
-**Option B — @yao-pkg/pkg (the maintained `pkg` fork):**
-
-```bash
-npm install
-npm run build:pkg
-```
-
-> `ssh2` runs in pure JavaScript by default. Do **not** add the optional
-> `cpu-features` native dependency — keeping the proxy 100% JS is what lets
-> these packagers produce a single self-contained binary.
+The proxy runs directly with `npm start`. If you want a single executable you can
+build one yourself with a tool of your choice, e.g. `npx @yao-pkg/pkg index.js`
+(needs a recent Node.js and OS). It is deliberately not a dependency, so
+`npm install` stays light.
 
 ## Security notes
 
