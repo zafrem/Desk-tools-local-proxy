@@ -11,29 +11,20 @@ credentials and traffic never leave your computer.
 Browser (xterm.js)  --WebSocket-->  local-proxy (localhost:8722)  --SSH-->  your server
 ```
 
-## Run it (no install)
+## Install and run
 
-If you have Node.js 18+:
-
-```bash
-npx desk-tools-local-proxy
-```
-
-Then open the **SSH Terminal** tool in Desk-tools — it will detect the proxy
-automatically and let you connect.
-
-## Run it (binary, no Node required)
-
-Download the binary for your OS from the Releases page and run it:
+This package is not published to npm and no prebuilt binaries are provided.
+Clone it and run it from source (Node.js 18+ and git required):
 
 ```bash
-# macOS / Linux
-chmod +x local-proxy-macos-arm64
-./local-proxy-macos-arm64
-
-# Windows
-local-proxy-windows-x64.exe
+git clone https://github.com/zafrem/Desk-tools-local-proxy.git
+cd Desk-tools-local-proxy
+npm install
+npm start
 ```
+
+Then open any console under **Consoles** in Desk-tools — it detects the proxy
+automatically. Use **Settings → Proxy → Test connection** to verify the link.
 
 ## Configuration
 
@@ -44,7 +35,7 @@ local-proxy-windows-x64.exe
 The proxy binds to `127.0.0.1` only and rejects WebSocket upgrades whose
 `Origin` is not the Desk-tools site (or `localhost:3000` for development).
 
-## Building standalone binaries
+## Building standalone binaries (optional)
 
 **Option A — Bun (cross-compiles all platforms from one machine):**
 
