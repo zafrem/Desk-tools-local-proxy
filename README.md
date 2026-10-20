@@ -1,4 +1,4 @@
-# desk-tools-ssh-proxy
+# desk-tools-local-proxy
 
 A tiny **local** WebSocket-to-SSH bridge for the [Desk-tools](https://zafrem.github.io/Desk-tools/) web terminal.
 
@@ -8,7 +8,7 @@ from the Desk-tools page, and relays it to a real SSH connection. Your
 credentials and traffic never leave your computer.
 
 ```
-Browser (xterm.js)  --WebSocket-->  ssh-proxy (localhost:8722)  --SSH-->  your server
+Browser (xterm.js)  --WebSocket-->  local-proxy (localhost:8722)  --SSH-->  your server
 ```
 
 ## Run it (no install)
@@ -16,7 +16,7 @@ Browser (xterm.js)  --WebSocket-->  ssh-proxy (localhost:8722)  --SSH-->  your s
 If you have Node.js 18+:
 
 ```bash
-npx desk-tools-ssh-proxy
+npx desk-tools-local-proxy
 ```
 
 Then open the **SSH Terminal** tool in Desk-tools — it will detect the proxy
@@ -28,18 +28,18 @@ Download the binary for your OS from the Releases page and run it:
 
 ```bash
 # macOS / Linux
-chmod +x ssh-proxy-macos-arm64
-./ssh-proxy-macos-arm64
+chmod +x local-proxy-macos-arm64
+./local-proxy-macos-arm64
 
 # Windows
-ssh-proxy-windows-x64.exe
+local-proxy-windows-x64.exe
 ```
 
 ## Configuration
 
 | Env var                          | Default | Description                          |
 | -------------------------------- | ------- | ------------------------------------ |
-| `DESK_TOOLS_SSH_PROXY_PORT`      | `8722`  | Local port the proxy listens on.     |
+| `DESK_TOOLS_LOCAL_PROXY_PORT`      | `8722`  | Local port the proxy listens on.     |
 
 The proxy binds to `127.0.0.1` only and rejects WebSocket upgrades whose
 `Origin` is not the Desk-tools site (or `localhost:3000` for development).
@@ -50,7 +50,7 @@ The proxy binds to `127.0.0.1` only and rejects WebSocket upgrades whose
 
 ```bash
 bun install
-npm run build:bun     # outputs dist/ssh-proxy-{macos,linux,windows}-*
+npm run build:bun     # outputs dist/local-proxy-{macos,linux,windows}-*
 ```
 
 **Option B — @yao-pkg/pkg (the maintained `pkg` fork):**

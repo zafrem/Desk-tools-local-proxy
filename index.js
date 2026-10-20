@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * desk-tools-ssh-proxy
+ * desk-tools-local-proxy
  * -------------------------------------------------------------------------
  * A tiny local bridge that lets the Desk-tools web terminal speak SSH.
  *
@@ -29,7 +29,7 @@ const http = require("http");
 const { WebSocketServer } = require("ws");
 const { Client } = require("ssh2");
 
-const PORT = Number(process.env.DESK_TOOLS_SSH_PROXY_PORT || 8722);
+const PORT = Number(process.env.DESK_TOOLS_LOCAL_PROXY_PORT || 8722);
 const HOST = "127.0.0.1"; // bind to loopback only — never expose to the network
 const VERSION = require("./package.json").version;
 
@@ -62,7 +62,7 @@ const server = http.createServer((req, res) => {
   if (req.url === "/health" || req.url === "/") {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(
-      JSON.stringify({ service: "desk-tools-ssh-proxy", version: VERSION, ok: true })
+      JSON.stringify({ service: "desk-tools-local-proxy", version: VERSION, ok: true })
     );
     return;
   }
@@ -192,7 +192,7 @@ wss.on("connection", (ws) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`desk-tools-ssh-proxy v${VERSION}`);
+  console.log(`desk-tools-local-proxy v${VERSION}`);
   console.log(`Listening on http://${HOST}:${PORT}  (health: /health)`);
   console.log("Open the SSH Terminal tool in Desk-tools to connect.");
   console.log("Press Ctrl+C to stop.");

@@ -31,8 +31,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/ssh-proxy-macos-arm64
-            dist/ssh-proxy-macos-x64
-            dist/ssh-proxy-linux-x64
-            dist/ssh-proxy-windows-x64.exe
+            dist/local-proxy-macos-arm64
+            dist/local-proxy-macos-x64
+            dist/local-proxy-linux-x64
+            dist/local-proxy-windows-x64.exe
           generate_release_notes: true
