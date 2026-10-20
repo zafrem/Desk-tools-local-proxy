@@ -5,11 +5,13 @@
   "license": "MIT",
   "type": "commonjs",
   "bin": {
-    "desk-tools-local-proxy": "index.js"
+    "desk-tools-local-proxy": "index.js",
+    "desk-tools-proxy": "cli.js"
   },
   "main": "index.js",
   "files": [
     "index.js",
+    "cli.js",
     "src",
     "PROTOCOL.md"
   ],
@@ -18,7 +20,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "node --test --test-force-exit \"test/*.test.js\""
+    "test": "node --test --test-force-exit \"test/*.test.js\"",
+    "cli": "node cli.js"
   },
   "dependencies": {
     "hive-driver": "^1.0.1",
