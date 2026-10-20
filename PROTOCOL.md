@@ -7,6 +7,10 @@ The browser talks to the proxy over a single WebSocket
 (`ws://127.0.0.1:8722`). **One WebSocket = one session = one backend
 connection.** To open several sessions, open several WebSockets.
 
+This document covers the browser WebSocket only. The scripted CLI (`cli.js`,
+see README "Automation") calls the same drivers directly and does not use it;
+it applies the same read-only check and the same value encoding (§5.2).
+
 Supported services:
 
 | `service`    | Kind     | Default port | Notes                               |
