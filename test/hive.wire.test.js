@@ -8,7 +8,6 @@ const Int64 = require("node-int64");
 const hive = require("hive-driver");
 const hiveService = require("../src/services/hive");
 const { TCLIService, TCLIService_types: T } = hive.thrift;
-const { TCLIService, TCLIService_types: T } = hive.thrift;
 const ok = new T.TStatus({ statusCode: T.TStatusCode.SUCCESS_STATUS });
 const h = (guid) => ({ guid: Buffer.alloc(16, guid), secret: Buffer.alloc(16, guid) });
 const prim = (type) => new T.TTypeDesc({ types: [new T.TTypeEntry({ primitiveEntry: new T.TPrimitiveTypeEntry({ type }) })] });

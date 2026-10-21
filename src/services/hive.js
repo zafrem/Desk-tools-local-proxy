@@ -118,8 +118,9 @@ exports.connect = async (cfg) => {
     },
 
     async close() {
-      await session.close().catch(() => {});
-      await client.close().catch(() => {});
+      // The driver may return a promise or nothing; either way, never throw on close.
+      try { await session.close(); } catch { /* already closed */ }
+      try { await client.close(); } catch { /* already closed */ }
     },
   };
 };
