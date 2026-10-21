@@ -23,6 +23,7 @@ function connectionOptions(cfg) {
     supportBigNumbers: true,
     bigNumberStrings: true,
     timezone: "Z",
+    dateStrings: ["DATE"], // a DATE has no time or zone: keep "2024-03-05"
   };
 }
 

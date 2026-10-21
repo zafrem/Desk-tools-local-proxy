@@ -312,3 +312,38 @@ test("trino: follows nextUri pages and returns columns/rows", async () => {
   c.ws.close();
   tr.close();
 });
+
+test("trino: unsafe BIGINTs stay exact, strings are untouched, extra pages are cancelled", async () => {
+  const { quoteUnsafeIntegers } = require("../src/services/trino");
+  assert.deepStrictEqual(
+    JSON.parse(quoteUnsafeIntegers('{"a":[9007199254740993,-9223372036854775808,12,1.5e20,"id 9007199254740993 \\" 12345678901234567890"]}')),
+    { a: ["9007199254740993", "-9223372036854775808", 12, 1.5e20, 'id 9007199254740993 " 12345678901234567890'] }
+  );
+
+  const deleted = [];
+  const tr = http.createServer((req, res) => {
+    const base = `http://127.0.0.1:${tr.address().port}`;
+    req.resume();
+    req.on("end", () => {
+      if (req.method === "DELETE") { deleted.push(req.url); res.statusCode = 204; return res.end(); }
+      if (req.url === "/v1/info") return res.end(JSON.stringify({ nodeVersion: { version: "1" } }));
+      if (req.url === "/v1/statement") return res.end(JSON.stringify({ nextUri: `${base}/p/1` }));
+      if (req.url === "/p/1") {
+        return res.end('{"columns":[{"name":"id","type":"bigint"}],"data":[[9007199254740993],[2],[3]],"nextUri":"' + base + '/p/2"}');
+      }
+      res.statusCode = 500; res.end("page 2 must not be fetched");
+    });
+  });
+  const tport = await listen(tr);
+  const c = client(port);
+  await c.opened;
+  c.send({ type: "connect", service: "trino", host: "127.0.0.1", port: tport, username: "bob" });
+  await c.next(); await c.next();
+  c.send({ type: "query", id: "b", sql: "SELECT id FROM t", maxRows: 2 });
+  const r = await c.next();
+  assert.deepStrictEqual(r.rows, [["9007199254740993"], [2]]);
+  assert.strictEqual(r.truncated, true);
+  assert.deepStrictEqual(deleted, ["/p/2"]);
+  c.ws.close();
+  tr.close();
+});
