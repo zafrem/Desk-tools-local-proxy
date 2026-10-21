@@ -70,6 +70,12 @@ npm run cli -- run nightly.json
 - Exit codes: `0` ok · `1` a step failed · `2` bad usage · `3` could not connect. Data goes to stdout, progress/errors to stderr.
 - A command that exits non-zero still has its output exported, then the step fails.
 
+## Troubleshooting Hive
+
+If a Hive result looks wrong, restart the proxy with `DESK_TOOLS_HIVE_DEBUG=1 npm start` and rerun the query.
+The terminal then prints the *shape* of what the server sent (column names and positions, value counts, null bitmaps;
+never the values), which is what we need to diagnose it.
+
 ## Configuration
 
 | Env var                          | Default | Description                          |

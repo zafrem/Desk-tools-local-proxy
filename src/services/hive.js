@@ -54,6 +54,21 @@ function rowsFromResult(result) {
   return rows;
 }
 
+/** DESK_TOOLS_HIVE_DEBUG=1: print the structure (never the values) of what the server sent. */
+function debugShape(op, result, rows) {
+  const shape = (op.getData() || []).map((rs) => ({
+    rows: (rs.rows || []).length,
+    columns: (rs.columns || []).map((c) => {
+      const kind = Object.keys(c).find((k) => c[k] && c[k].values);
+      const v = kind && c[kind];
+      return v ? { kind, values: v.values.length, nullsBytes: v.nulls ? v.nulls.length : null, nulls: v.nulls ? [...v.nulls].slice(0, 8) : null } : { kind: "none" };
+    }),
+  }));
+  console.error("[hive-debug] schema:", JSON.stringify(result.getSchemaColumns().map((c) => ({ name: c.columnName, position: c.position }))));
+  console.error("[hive-debug] rowsets:", JSON.stringify(shape));
+  console.error(`[hive-debug] produced ${rows.length} row(s)`);
+}
+
 exports.rowsFromResult = rowsFromResult;
 exports.displayName = displayName;
 
@@ -90,6 +105,7 @@ exports.connect = async (cfg) => {
         const result = utils.getResult(op);
         const columns = result.getSchemaColumns().map((c) => ({ name: displayName(c.columnName), type: typeName(c) }));
         const rows = rowsFromResult(result);
+        if (process.env.DESK_TOOLS_HIVE_DEBUG) debugShape(op, result, rows);
         return { columns, rows };
       } finally {
         current = null;
