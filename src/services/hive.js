@@ -33,6 +33,30 @@ function typeName(col) {
   return TYPE_NAMES[id] || "unknown";
 }
 
+/** Hive reports columns as `table.column`; show just the column. */
+const displayName = (columnName) => String(columnName || "").split(".").pop();
+
+/**
+ * Turns the driver's per-column data into rows of values. The driver's own
+ * object form is keyed by name, which loses duplicate names and mismatches
+ * the schema's qualified names, so we read the columns by position instead.
+ */
+function rowsFromResult(result) {
+  const descriptors = result.getSchemaColumns();
+  const base = Math.max(Math.min(...descriptors.map((d) => d.position)), 0);
+  const rows = [];
+  for (const rowSet of result.data || []) {
+    const cols = rowSet.columns || [];
+    const perColumn = descriptors.map((d) => result.getSchemaValues(d, cols[d.position - base] || {}));
+    const count = Math.max(0, ...perColumn.map((v) => v.length));
+    for (let i = 0; i < count; i++) rows.push(perColumn.map((v) => (v[i] === undefined ? null : v[i])));
+  }
+  return rows;
+}
+
+exports.rowsFromResult = rowsFromResult;
+exports.displayName = displayName;
+
 exports.connect = async (cfg) => {
   const client = new hive.HiveClient(TCLIService, TCLIService_types);
   const utils = new hive.HiveUtils(TCLIService_types);
@@ -63,13 +87,9 @@ exports.connect = async (cfg) => {
         await utils.waitUntilReady(op, false, () => {});
         await utils.fetchAll(op);
         const schema = op.getSchema();
-        const columns = ((schema && schema.columns) || []).map((c) => ({
-          name: c.columnName,
-          type: typeName(c),
-        }));
-        const objects = utils.getResult(op).getValue();
-        // The driver returns one object per row keyed by column name.
-        const rows = objects.map((o) => columns.map((c) => o[c.name]));
+        const result = utils.getResult(op);
+        const columns = result.getSchemaColumns().map((c) => ({ name: displayName(c.columnName), type: typeName(c) }));
+        const rows = rowsFromResult(result);
         return { columns, rows };
       } finally {
         current = null;
